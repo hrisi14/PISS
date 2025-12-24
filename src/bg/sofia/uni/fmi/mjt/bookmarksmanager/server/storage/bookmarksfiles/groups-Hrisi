@@ -1,0 +1,121 @@
+{
+  "groups": {
+    "other": {
+      "groupName": "other",
+      "bookmarks": {}
+    },
+    "synced": {
+      "groupName": "synced",
+      "bookmarks": {}
+    },
+    "bookmark_bar": {
+      "groupName": "bookmark_bar",
+      "bookmarks": {
+        "Карти": {
+          "title": "Карти",
+          "url": "https://maps.google.com/",
+          "keywords": [
+            "от",
+            "ви",
+            "„бисквитки“",
+            "реклами",
+            "използваме",
+            "в",
+            "на",
+            "deutsch",
+            "и",
+            "englishunit",
+            "italiano",
+            "за",
+            "да",
+            "всички",
+            "съдържание"
+          ],
+          "groupName": "bookmark_bar"
+        },
+        "Gmail": {
+          "title": "Gmail",
+          "url": "https://accounts.google.com/b/0/AddMailService",
+          "keywords": [
+            "français",
+            "use",
+            "sign",
+            "type",
+            "mode",
+            "portuguê",
+            "unit",
+            "see",
+            "phone",
+            "english",
+            "guest",
+            "text",
+            "email",
+            "hear",
+            "account"
+          ],
+          "groupName": "bookmark_bar"
+        },
+        "YouTube": {
+          "title": "YouTube",
+          "url": "https://youtube.com/",
+          "keywords": [
+            "llc",
+            "2025",
+            "©",
+            "google"
+          ],
+          "groupName": "bookmark_bar"
+        }
+      }
+    },
+    "CustomGroup": {
+      "groupName": "CustomGroup",
+      "bookmarks": {
+        "Gymshark-Official-Store---Gym-Clothes-\u0026-Workout-Clothes": {
+          "title": "Gymshark-Official-Store---Gym-Clothes-\u0026-Workout-Clothes",
+          "url": "https://eu.gymshark.com/",
+          "keywords": [
+            "new",
+            "seamless",
+            "run",
+            "best",
+            "accessori",
+            "leg",
+            "everyday",
+            "fit",
+            "unit",
+            "top",
+            "price",
+            "men",
+            "short",
+            "gym",
+            "regular"
+          ],
+          "groupName": "CustomGroup"
+        },
+        "GitHub-·-Build-and-ship-software-on-a-single,-collaborative-platform-·-GitHub": {
+          "title": "GitHub-·-Build-and-ship-software-on-a-single,-collaborative-platform-·-GitHub",
+          "url": "https://github.com/",
+          "keywords": [
+            "github",
+            "copilot",
+            "code",
+            "read",
+            "work",
+            "project",
+            "source",
+            "platform",
+            "search",
+            "security",
+            "fix",
+            "build",
+            "developer",
+            "support",
+            "customer"
+          ],
+          "groupName": "CustomGroup"
+        }
+      }
+    }
+  }
+}
