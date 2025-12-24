@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bookmarks Push Notifications</title>
+    <style>
+        :root {
+            --main-bg: #f7f7fa;
+            --container-bg: #fff;
+            --primary: #4f8cff;
+            --accent: #ffb347;
+            --success-bg: #e3f6e8;
+            --success-text: #1b4d2b;
+            --info-bg: #e6f0fa;
+            --info-text: #2a4d7a;
+            --error-bg: #ffeaea;
+            --error-text: #a94442;
+            --border: #e0e0e0;
+            --shadow: 0 2px 12px rgba(79,140,255,0.08);
+        }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: var(--main-bg);
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 700px;
+            margin: 40px auto;
+            background: var(--container-bg);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            padding: 36px 28px 28px 28px;
+            border: 2px solid var(--primary);
+        }
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 28px;
+            letter-spacing: 1px;
+        }
+        #push-messages {
+            min-height: 300px;
+            max-height: 600px;
+            overflow-y: auto;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            background: #fafbfc;
+            padding: 18px;
+            font-size: 1.08em;
+            transition: border-color 0.2s;
+        }
+        .push-msg {
+            background: var(--success-bg);
+            color: var(--success-text);
+            border-left: 6px solid var(--primary);
+            border-radius: 7px;
+            margin-bottom: 12px;
+            padding: 10px 16px;
+            box-shadow: 0 1px 2px rgba(60,180,120,0.06);
+            word-break: break-word;
+            animation: fadeIn 0.5s;
+            transition: background 0.2s, color 0.2s;
+        }
+        .push-msg.success {
+            background: #e3f6e8;
+            color: #1b4d2b;
+            border-left: 6px solid #4caf50;
+        }
+        .push-msg.info {
+            background: #e6f0fa;
+            color: #2a4d7a;
+            border-left: 6px solid #2196f3;
+        }
+        .push-msg.error {
+            background: #ffeaea;
+            color: #a94442;
+            border-left: 6px solid #ff4f4f;
+        }
+        .push-msg.info {
+            background: var(--info-bg);
+            color: var(--info-text);
+            border-left: 6px solid var(--accent);
+        }
+        .push-msg.error {
+            background: var(--error-bg);
+            color: var(--error-text);
+            border-left: 6px solid #ff4f4f;
+        }
+        .push-msg:last-child {
+            margin-bottom: 0;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        .footer {
+            margin-top: 32px;
+            text-align: center;
+            color: #888;
+            font-size: 1em;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bookmarks Push Notifications</h1>
+        <div id="push-messages"></div>
+        <div class="footer">
+            <span style="color: var(--primary); font-weight: bold;">&#9733;</span>
+            Real-time updates from the <span style="color: var(--accent); font-weight: bold;">Bookmarks Manager</span> server.
+        </div>
+    </div>
+    <script src="push-client.js"></script>
+    <script>
+        // Auto-scroll to last message
+        const messagesDiv = document.getElementById('push-messages');
+        const observer = new MutationObserver(() => {
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        });
+        observer.observe(messagesDiv, { childList: true });
+    </script>
+</body>
+</html>
