@@ -19,6 +19,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.net.http.HttpRequest.BodyPublishers;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Collection;
@@ -52,6 +53,7 @@ public class BookmarksGroupStorage implements Serializable {
 
     private static final Duration PROBE_TIMEOUT = Duration.ofSeconds(5);
     private static final int NOT_FOUND = 400;
+    private static final String WEBSOCKET_PUSH_URL = "http://localhost:8080/push";
 
     public BookmarksGroupStorage(String fileName) {
         this.groups = new HashMap<>();
@@ -80,38 +82,61 @@ public class BookmarksGroupStorage implements Serializable {
 
     public void createNewGroup(String groupName) {
         if (groups.containsKey(groupName)) {
+            sendPushNotification("[error] A group with name " + groupName + " already exists");
             throw new GroupAlreadyExistsException(String.format("A " +
                     "group with name %s already exists", groupName));
         }
 
         groups.put(groupName, new BookmarksGroup(groupName, new HashMap<>()));
+        sendPushNotification("[success] New group created: " + groupName);
         //updateGroupsFile();
     }
 
     public void addNewBookmarkToGroup(Bookmark bookmark, String groupName) {
         if (groupName == null || groupName.isEmpty() || groupName.isBlank() ||
                 bookmark == null) {
+            sendPushNotification("[error] Invalid group name or bookmark!");
             throw new IllegalArgumentException("Group's name/bookmark can not be null!");
         }
         if (!containsGroup(groupName)) {
+            sendPushNotification("[error] There is no group " + groupName + ".");
             throw new NoSuchGroupException(String.format("There is no group %s.",
                     groupName));
         }
         if (groups.get(groupName).getBookmarks().contains(bookmark)) {
+            sendPushNotification("[info] Bookmark already exists in group: " + groupName);
             return;
         }
         groups.get(groupName).addNewBookmark(bookmark);
         updateGroupsFile();
+        sendPushNotification("[success] New bookmark added: " + bookmark.title() + " to group: " + groupName);
+    }
+
+    public void sendPushNotification(String message) {
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(WEBSOCKET_PUSH_URL))
+                .header("Content-Type", "application/json")
+                .POST(BodyPublishers.ofString("{\"message\":\"" + message.replace("\"", "\\\"") + "\"}"))
+                .timeout(Duration.ofSeconds(2))
+                .build();
+            client.sendAsync(request, HttpResponse.BodyHandlers.discarding());
+        } catch (Exception e) {
+            System.err.println("Failed to send push notification: " + e.getMessage());
+        }
     }
 
     public void removeBookmarkFromGroup(String bookmarkTitle, String groupName) {
         if (groupName == null || groupName.isEmpty() || groupName.isBlank() ||
                 bookmarkTitle == null || bookmarkTitle.isEmpty() ||
                 bookmarkTitle.isBlank()) {
+            sendPushNotification("[error] Group name/bookmark's title can not be null!");
             throw (new IllegalArgumentException("Group name/bookmark's " +
                     "title can not be null!"));
         }
         if (!containsGroup(groupName)) {
+            sendPushNotification("[error] There is no group " + groupName + ".");
             throw new NoSuchGroupException(String.format("There is no group %s.",
                     groupName));
         }
@@ -121,16 +146,19 @@ public class BookmarksGroupStorage implements Serializable {
                 findFirst().orElse(null);
 
         if (toRemove == null) {
+            sendPushNotification("[error] Group " + groupName + " has no bookmark " + bookmarkTitle + " to be removed!");
             throw new NoSuchBookmarkException(String.format("Group %s has " +
                     "no bookmark %s to be removed!", groupName, bookmarkTitle));
         }
         groups.get(groupName).removeBookmark(toRemove);
         updateGroupsFile();
+        sendPushNotification("[info] Bookmark removed: " + bookmarkTitle + " from group: " + groupName);
     }
 
     public List<Bookmark> importBookmarksFromChrome() {
         Map<String, BookmarksGroup> chromeGroups = ChromeImporter.importChromeGroups();
         if (chromeGroups == null) {
+            sendPushNotification("[error] No Chrome bookmarks to be imported");
             return null;   //exceptions have already been logged in the
             // methods of the ChromeImporter class, so not needed here
         }
@@ -140,6 +168,7 @@ public class BookmarksGroupStorage implements Serializable {
             }
         }
         updateGroupsFile();
+        sendPushNotification("[success] Chrome bookmarks imported: " + chromeGroups.size() + " groups");
         return chromeGroups.values().stream().map(BookmarksGroup::
                 getBookmarks).flatMap(Collection::stream).toList();
     }
@@ -216,6 +245,9 @@ public class BookmarksGroupStorage implements Serializable {
         if (removedTotal > 0) {
             updateGroupsFile();
             System.err.println("Group's file updated.");
+            sendPushNotification("[info] Cleanup removed " + removedTotal + " invalid bookmarks.");
+        } else {
+            sendPushNotification("[info] Cleanup found no invalid bookmarks.");
         }
         return removedTotal;
     }
